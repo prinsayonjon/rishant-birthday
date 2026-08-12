@@ -16,6 +16,7 @@
     }
 
     .page {
+      position: relative;
       width: 100%;
       height: 100vh;
       display: flex;
@@ -28,14 +29,216 @@
       height: 100%;
       object-fit: contain;
     }
+
+    /* =========================
+       INTERACTIVE CANDLES
+       ========================= */
+
+    .flame {
+      position: absolute;
+      width: 22px;
+      height: 34px;
+
+      /* TEMPORARY POSITIONS */
+      /* We'll adjust these after you test them */
+      z-index: 10;
+
+      cursor: pointer;
+
+      background: linear-gradient(
+        to bottom,
+        #fffbd0 0%,
+        #ffe66d 35%,
+        #ffae00 70%,
+        #ff5a00 100%
+      );
+
+      border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+
+      filter:
+        drop-shadow(0 0 5px #ffb300)
+        drop-shadow(0 0 10px #ff8c00);
+
+      animation: flicker 0.15s infinite alternate;
+    }
+
+    /* Inner flame */
+    .flame::after {
+      content: "";
+      position: absolute;
+
+      width: 9px;
+      height: 16px;
+
+      left: 6.5px;
+      top: 11px;
+
+      background: #fffef0;
+
+      border-radius: 50%;
+
+      filter: blur(1px);
+    }
+
+    /* Flame movement */
+    @keyframes flicker {
+      0% {
+        transform: rotate(-3deg) scale(1);
+      }
+
+      50% {
+        transform: rotate(2deg) scale(1.05);
+      }
+
+      100% {
+        transform: rotate(4deg) scale(0.96);
+      }
+    }
+
+    /* =========================
+       FLAME GOING OUT
+       ========================= */
+
+    .flame.out {
+      animation: blowOut 0.5s forwards;
+      pointer-events: none;
+    }
+
+    @keyframes blowOut {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      35% {
+        transform: scale(1.3, 0.7);
+        opacity: 0.8;
+      }
+
+      70% {
+        transform: scale(0.7, 1.2);
+        opacity: 0.4;
+      }
+
+      100% {
+        transform: scale(0.05);
+        opacity: 0;
+      }
+    }
+
+    /* =========================
+       SMOKE
+       ========================= */
+
+    .smoke {
+      position: fixed;
+
+      width: 8px;
+      height: 18px;
+
+      background: rgba(150, 150, 150, 0.45);
+
+      border-radius: 50%;
+
+      z-index: 9;
+
+      pointer-events: none;
+
+      animation: smokeRise 1.2s ease-out forwards;
+    }
+
+    @keyframes smokeRise {
+      0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0.7;
+      }
+
+      50% {
+        transform: translateY(-15px) translateX(5px) scale(1);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(-45px) translateX(-5px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* =========================
+       TEMPORARY FLAME POSITIONS
+       ========================= */
+
+    #flame1 {
+      left: 42%;
+      top: 55%;
+    }
+
+    #flame2 {
+      left: 50%;
+      top: 55%;
+    }
+
+    #flame3 {
+      left: 58%;
+      top: 55%;
+    }
+
   </style>
 </head>
 
 <body>
 
   <div class="page">
- <img src="first%20page%20png.png" alt="Rishant's Birthday">
+
+    <!-- YOUR CANVA PAGE -->
+    <img
+      src="first%20page%20png.png"
+      alt="Rishant's Birthday"
+    >
+
+    <!-- INTERACTIVE FLAMES -->
+    <div class="flame" id="flame1"></div>
+    <div class="flame" id="flame2"></div>
+    <div class="flame" id="flame3"></div>
+
   </div>
+
+  <script>
+
+    const flames = document.querySelectorAll(".flame");
+
+    flames.forEach(function(flame) {
+
+      flame.addEventListener("click", function() {
+
+        /* Put flame out */
+        flame.classList.add("out");
+
+        /* Create smoke */
+        const smoke = document.createElement("div");
+
+        smoke.className = "smoke";
+
+        const rect = flame.getBoundingClientRect();
+
+        smoke.style.left =
+          (rect.left + rect.width / 2 - 4) + "px";
+
+        smoke.style.top =
+          rect.top + "px";
+
+        document.body.appendChild(smoke);
+
+        /* Remove smoke */
+        setTimeout(function() {
+          smoke.remove();
+        }, 1200);
+
+      });
+
+    });
+
+  </script>
 
 </body>
 </html>
